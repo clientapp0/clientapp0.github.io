@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solarised Interface</title>
     <style>
       body {
@@ -50,16 +50,16 @@
         color: white;
       }
     </style>
-  </head>
-  <body>
-    <h1>Solarised User Interface | your Status:🟢</h1>
+</head>
+<body>
+    <h1>Solarised User Interface | Your Status: <span id="status">🟢</span></h1>
     <div id="editor"></div>
     <div class="button-container">
-      <button id="execute-lua-btn">Execute</button>
-      <button id="clear-btn">Clear</button>
+        <button id="execute-lua-btn">Execute</button>
+        <button id="clear-btn">Clear</button>
     </div>
 
-    <!-- Include Monaco Editor library -->
+    <!-- include monaco -->
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.31.0/min/vs/loader.js"></script>
     <script>
       require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.31.0/min/vs' }});
@@ -69,31 +69,46 @@
           language: 'lua',
           automaticLayout: true,
           theme: 'vs-dark',
-          minimap: {
-            enabled: false
-          },
+          minimap: { enabled: false },
           lineNumbers: 'off',
           scrollBeyondLastLine: false,
           readOnly: false,
           glyphMargin: false,
           lineDecorationsWidth: 0,
           overviewRulerLanes: 0,
-          padding: {
-            top: 16,
-            bottom: 16
-          }
+          padding: { top: 16, bottom: 16 }
         });
 
+        // attach websocket
+        const socket = new WebSocket("ws://localhost:8080");
+
+        // WebSocket event handlers
+        socket.onopen = function(event) {
+            document.getElementById("status").innerText = "🟢 Connected";
+        };
+
+        socket.onmessage = function(event) {
+            console.log("Message from server:", event.data);
+            // Update UI
+        };
+
+        socket.onclose = function(event) {
+            document.getElementById("status").innerText = "🔴 Disconnected";
+        };
+
+        // Event listener for executing Lua code
         document.getElementById('execute-lua-btn').addEventListener('click', () => {
           const luaContent = editor.getValue();
           console.log('Executing Lua code:', luaContent);
-          // Replace this with your Lua execution logic
+          // data to lua
+          socket.send(luaContent);
         });
 
+        // event clear
         document.getElementById('clear-btn').addEventListener('click', () => {
           editor.setValue('');
         });
       });
     </script>
-  </body>
+</body>
 </html>
