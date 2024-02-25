@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solarised Interface</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        background-color: #1a1a1a;
+      }
+      #editor {
+        width: 80%;
+        min-height: 450px;
+        background-color: #1e222a;
+      }
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.5;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 0.25rem;
+        transition: all 0.15s ease;
+        cursor: pointer;
+        color: white;
+        background-color: #2c2c2c;
+        border: none;
+        margin: 0.5rem;
+      }
+      button:hover {
+        background-color: #4539f5;
+      }
+      .button-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        width: 80%;
+      }
+      h1 {
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Solarised User Interface | your Status:🟢</h1>
+    <div id="editor"></div>
+    <div class="button-container">
+      <button id="execute-lua-btn">Execute</button>
+      <button id="clear-btn">Clear</button>
+    </div>
+
+    <!-- Include Monaco Editor library -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.31.0/min/vs/loader.js"></script>
+    <script>
+      require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.31.0/min/vs' }});
+      require(['vs/editor/editor.main'], function () {
+        const editor = monaco.editor.create(document.getElementById('editor'), {
+          value: '',
+          language: 'lua',
+          automaticLayout: true,
+          theme: 'vs-dark',
+          minimap: {
+            enabled: false
+          },
+          lineNumbers: 'off',
+          scrollBeyondLastLine: false,
+          readOnly: false,
+          glyphMargin: false,
+          lineDecorationsWidth: 0,
+          overviewRulerLanes: 0,
+          padding: {
+            top: 16,
+            bottom: 16
+          }
+        });
+
+        document.getElementById('execute-lua-btn').addEventListener('click', () => {
+          const luaContent = editor.getValue();
+          console.log('Executing Lua code:', luaContent);
+          // Replace this with your Lua execution logic
+        });
+
+        document.getElementById('clear-btn').addEventListener('click', () => {
+          editor.setValue('');
+        });
+      });
+    </script>
+  </body>
+</html>
